@@ -137,19 +137,11 @@ service:
 # -- Ingress configuration
 ingress:
   enabled: false
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-  hosts:
-    - host: n8n.example.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: n8n-tls
-      hosts:
-        - n8n.example.com
+  className: "shared-alb"
+  host: "n8n.example.com"
+  path: "/"
+  pathType: Prefix
+  annotations: {}
 
 # -- Resource limits and requests
 resources:
