@@ -8,19 +8,16 @@ on: # rebuild any PRs and main branch changes
 jobs:
   Pre-commit:
     runs-on:
-      - nix
-      - ARM64
+      - nscloud-ubuntu-22.04-arm64-2x4-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-n8n-helm-nix-store-cache
     steps:
-      - name: Atomi CI Environment
-        uses: kirinnee/atomici-action@v2.3.1
-
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: AtomiCloud/actions.setup-nix@v2
 
       - name: Run Pre-commit checks
+        run: nix-shell nix/shells.nix -A ci --run scripts/ci/pre-commit.sh
         env:
           NIXPKGS_ALLOW_UNFREE: "1"
-        run: nix-shell nix/shells.nix -A ci --run scripts/ci/pre-commit.sh
 
   Release:
     needs:
@@ -28,16 +25,19 @@ jobs:
     name: Release
     if: github.ref == 'refs/heads/main'
     runs-on:
-      - nix
-      - ARM64
+      - nscloud-ubuntu-22.04-arm64-2x4-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-n8n-helm-nix-store-cache
+    permissions:
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
-      - name: AtomiCloud CI Environment
-        uses: kirinnee/atomici-action@v2.3.1
-
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: AtomiCloud/actions.setup-nix@v2
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+          fetch-depth: 0
 
       - name: Remove GitHooks
         run: rm ./.git/hooks/* || true
@@ -45,4 +45,5 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+          NIXPKGS_ALLOW_UNFREE: "1"
         run: nix-shell nix/shells.nix -A cd --run scripts/ci/release.sh
