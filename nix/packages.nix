@@ -1,32 +1,26 @@
-{ nixpkgs ? import <nixpkgs> { } }:
+{ pkgs, atomi, atomi_classic, pkgs-sept-17-23 }:
 let
-  pkgs = rec {
-    atomi_classic = (
-      with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v8.1.0.tar.gz");
+  all = rec {
+    atomipkgs_classic = (
+      with atomi_classic;
       {
         inherit sg;
       }
     );
-    atomi = (
-      with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v17.0.0.tar.gz");
+    atomipkgs = (
+      with atomi;
       {
-        inherit pls idea-u precommit-patch-nix;
+        inherit pls;
       }
     );
-    "22.11 28th Jan 2023" = (
-      with import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/cc4bb87f5457ba06af9ae57ee4328a49ce674b1b.tar.gz") { };
+    sept-17-23 = (
+      with pkgs-sept-17-23;
       {
         inherit
-          pre-commit;
-      }
-    );
-    "Unstable 27th Jan 2023" = (
-      with import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/e62676e855cc300d6a2a76f72c28eaa532aff277.tar.gz") { };
-      {
-        inherit
+          time
+          pre-commit
           coreutils
           gnugrep
-
           jq
           yq-go
           kubernetes-helm
@@ -39,15 +33,14 @@ let
           nodejs
           gomplate
           shellcheck;
-
         npm = nodePackages.npm;
         prettier = nodePackages.prettier;
+        helm = kubernetes-helm;
       }
     );
   };
 in
-with pkgs;
-atomi_classic //
-atomi //
-pkgs."22.11 28th Jan 2023" //
-pkgs."Unstable 27th Jan 2023"
+with all;
+atomipkgs //
+atomipkgs_classic //
+sept-17-23

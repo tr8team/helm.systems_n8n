@@ -1,32 +1,30 @@
-{ nixpkgs ? import <nixpkgs> { } }:
-let pkgs = import ./packages.nix { inherit nixpkgs; }; in
-with pkgs;
+{ pkgs, packages }:
+with packages;
 {
   system = [
     coreutils
     gnugrep
     jq
     yq-go
+    time
 
   ];
 
   main = [
     gomplate
     pls
-    kubernetes-helm
+    helm
     kubectl
     kube3d
   ];
 
   dev = [
 
-    idea-u
   ];
 
   lint = [
     sg
     gitlint
-    precommit-patch-nix
     pre-commit
     nixpkgs-fmt
     prettier
