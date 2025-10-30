@@ -1,0 +1,19 @@
+apiVersion: v2
+name: gotrade-n8n
+description: Gotrade's Helm chart to deploy self-hosted n8n workflow automation
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.72.0"
+
+dependencies:
+  - name: postgresql
+    version: 16.5.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 20.6.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled

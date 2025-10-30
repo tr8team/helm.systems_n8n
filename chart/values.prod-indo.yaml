@@ -1,0 +1,131 @@
+# Values for production Indonesia environment
+
+n8n:
+  protocol: "https"
+  host: "n8n.prod.tr8.io"
+  webhookUrl: "https://n8n.prod.tr8.io/"
+  editorBaseUrl: "https://n8n.prod.tr8.io/"
+  timezone: "Asia/Jakarta"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+  hosts:
+    - host: n8n.prod.tr8.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: n8n-prod-tls
+      hosts:
+        - n8n.prod.tr8.io
+
+# Production-grade resources
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+persistence:
+  enabled: true
+  size: 50Gi
+
+# Production PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    username: n8n
+    database: n8n
+  primary:
+    persistence:
+      enabled: true
+      size: 100Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    # Production-grade PostgreSQL settings
+    extendedConfiguration: |
+      max_connections = 200
+      shared_buffers = 512MB
+      effective_cache_size = 1536MB
+      maintenance_work_mem = 128MB
+      checkpoint_completion_target = 0.9
+      wal_buffers = 16MB
+      default_statistics_target = 100
+      random_page_cost = 1.1
+      effective_io_concurrency = 200
+      work_mem = 2621kB
+      min_wal_size = 1GB
+      max_wal_size = 4GB
+
+# Production Redis configuration
+redis:
+  enabled: true
+  auth:
+    enabled: true
+  master:
+    persistence:
+      enabled: true
+      size: 16Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 16Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+podLabels:
+  tr8.io/landscape: prod-indo
+
+additionalLabels:
+  tr8.io/landscape: prod-indo
+
+podAnnotations:
+  tr8.io/landscape: prod-indo
+
+additionalAnnotations:
+  tr8.io/landscape: prod-indo
+
+# Node selector for production environment in Indonesia region
+nodeSelector:
+  karpenter.sh/capacity-type: "on-demand"
+  kubernetes.io/arch: "amd64"
+  topology.kubernetes.io/region: "ap-southeast-3"
+
+# High availability with pod anti-affinity
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - n8n
+          topologyKey: kubernetes.io/hostname

@@ -1,0 +1,93 @@
+# Values for staging environment
+
+n8n:
+  protocol: "https"
+  host: "n8n.stage.tr8.io"
+  webhookUrl: "https://n8n.stage.tr8.io/"
+  editorBaseUrl: "https://n8n.stage.tr8.io/"
+  timezone: "Asia/Singapore"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  hosts:
+    - host: n8n.stage.tr8.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: n8n-stage-tls
+      hosts:
+        - n8n.stage.tr8.io
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  size: 20Gi
+
+postgresql:
+  enabled: true
+  auth:
+    username: n8n
+    database: n8n
+  primary:
+    persistence:
+      enabled: true
+      size: 30Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      limits:
+        cpu: 250m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+podLabels:
+  tr8.io/landscape: staging
+
+additionalLabels:
+  tr8.io/landscape: staging
+
+podAnnotations:
+  tr8.io/landscape: staging
+
+additionalAnnotations:
+  tr8.io/landscape: staging
+
+# Node selector for staging environment
+nodeSelector:
+  karpenter.sh/capacity-type: "spot"
+  kubernetes.io/arch: "amd64"
+
+# Tolerations for spot instances
+tolerations:
+  - key: "karpenter.sh/capacity-type"
+    operator: "Equal"
+    value: "spot"
+    effect: "NoSchedule"
