@@ -1,0 +1,245 @@
+# Default values for n8n
+# This is a YAML-formatted file.
+
+# -- Number of n8n replicas
+replicaCount: 1
+
+# -- n8n image configuration
+image:
+  repository: n8nio/n8n
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Image pull secrets
+imagePullSecrets: []
+
+# -- Override the name
+nameOverride: ""
+
+# -- Override the full name
+fullnameOverride: ""
+
+# -- n8n specific configuration
+n8n:
+  # -- Protocol (http or https)
+  protocol: "https"
+  # -- Host for n8n
+  host: "n8n.example.com"
+  # -- Webhook URL
+  webhookUrl: "https://n8n.example.com/"
+  # -- Editor base URL
+  editorBaseUrl: "https://n8n.example.com/"
+  # -- Timezone for n8n
+  timezone: "UTC"
+  # -- Encryption key for credentials (MUST be changed in production)
+  # Generate with: openssl rand -hex 32
+  encryptionKey: "changeme-generate-with-openssl-rand-hex-32"
+
+# -- Extra environment variables
+extraEnv: []
+  # - name: N8N_LOG_LEVEL
+  #   value: "info"
+
+# -- Service account configuration
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  name: ""
+
+# -- Pod annotations
+podAnnotations:
+  # -- L of LPSD of Gotrade Service Tree
+  tr8.io/landscape: develop
+  # -- P of LPSD of Gotrade Service Tree
+  tr8.io/platform: automation
+  # -- S of LPSD of Gotrade Service Tree
+  tr8.io/service: n8n
+  # -- D of LPSD of Gotrade Service Tree
+  tr8.io/designation: workflow-engine
+  # -- Infrastructure layer this application belongs to
+  tr8.io/layer: "2"
+  # -- Team in charge of this chart
+  tr8.io/team: DevOps
+  # -- Chart version
+  tr8.io/version: {{ .Env.VERSION }}
+
+# -- Pod labels
+podLabels:
+  # -- L of LPSD of Gotrade Service Tree
+  tr8.io/landscape: develop
+  # -- P of LPSD of Gotrade Service Tree
+  tr8.io/platform: automation
+  # -- S of LPSD of Gotrade Service Tree
+  tr8.io/service: n8n
+  # -- D of LPSD of Gotrade Service Tree
+  tr8.io/designation: workflow-engine
+  # -- Infrastructure layer this application belongs to
+  tr8.io/layer: "2"
+  # -- Team in charge of this chart
+  tr8.io/team: DevOps
+
+# -- Additional labels to add to all resources
+additionalLabels:
+  # -- L of LPSD of Gotrade Service Tree
+  tr8.io/landscape: develop
+  # -- P of LPSD of Gotrade Service Tree
+  tr8.io/platform: automation
+  # -- S of LPSD of Gotrade Service Tree
+  tr8.io/service: n8n
+  # -- D of LPSD of Gotrade Service Tree
+  tr8.io/designation: workflow-engine
+  # -- Infrastructure layer this application belongs to
+  tr8.io/layer: "2"
+  # -- Team in charge of this chart
+  tr8.io/team: DevOps
+
+# -- Additional annotations to add to all resources
+additionalAnnotations:
+  # -- L of LPSD of Gotrade Service Tree
+  tr8.io/landscape: develop
+  # -- P of LPSD of Gotrade Service Tree
+  tr8.io/platform: automation
+  # -- S of LPSD of Gotrade Service Tree
+  tr8.io/service: n8n
+  # -- D of LPSD of Gotrade Service Tree
+  tr8.io/designation: workflow-engine
+  # -- Infrastructure layer this application belongs to
+  tr8.io/layer: "2"
+  # -- Team in charge of this chart
+  tr8.io/team: DevOps
+
+# -- Pod security context
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+
+# -- Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# -- Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+# -- Ingress configuration
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  hosts:
+    - host: n8n.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: n8n-tls
+      hosts:
+        - n8n.example.com
+
+# -- Resource limits and requests
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# -- Persistence configuration
+persistence:
+  enabled: true
+  # -- Use an existing PVC
+  existingClaim: ""
+  # -- Storage class
+  storageClass: ""
+  # -- Access modes
+  accessModes:
+    - ReadWriteOnce
+  # -- Storage size
+  size: 10Gi
+  # -- Annotations for PVC
+  annotations: {}
+
+# -- Extra volumes
+extraVolumes: []
+
+# -- Extra volume mounts
+extraVolumeMounts: []
+
+# -- Node selector
+nodeSelector: {}
+
+# -- Tolerations
+tolerations: []
+
+# -- Affinity
+affinity: {}
+
+# -- PostgreSQL configuration (subchart)
+postgresql:
+  enabled: true
+  auth:
+    username: n8n
+    password: changeme-n8n-postgres-password
+    database: n8n
+  primary:
+    service:
+      ports:
+        postgresql: 5432
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+# -- External PostgreSQL configuration (when postgresql.enabled=false)
+externalDatabase:
+  host: ""
+  port: 5432
+  user: n8n
+  password: ""
+  database: n8n
+
+# -- Redis configuration (subchart) - Optional but recommended for queue mode
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: changeme-n8n-redis-password
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      limits:
+        cpu: 250m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+# -- External Redis configuration (when redis.enabled=false)
+externalRedis:
+  host: ""
+  port: 6379
+  password: ""

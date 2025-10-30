@@ -1,0 +1,84 @@
+version: "3"
+
+includes:
+  ci: ./scripts/Taskfile.ci.yml
+  fmt: ./scripts/Taskfile.fmt.yml
+  ide: ./scripts/Taskfile.ide.yml
+  lint: ./scripts/Taskfile.lint.yml
+  util: ./scripts/Taskfile.util.yml
+  enforce: ./scripts/Taskfile.enforce.yml
+
+env:
+  RELEASE_NAME: n8n
+
+tasks:
+  setup:
+    desc: Setup the repository for development
+    cmds:
+      - pre-commit install -c ./config/.pre-commit-config.yaml --install-hooks
+      - pre-commit install -c ./config/.pre-commit-config.yaml -t commit-msg
+      - precommit-nix-patch patch
+
+  # Checks
+  check:
+    desc: Run all checks
+    cmds:
+      - task: fmt
+      - task: lint
+      - task: enforce
+  # Utility
+  start:cluster:
+    desc: Starts the playground cluster to test helm charts
+    cmds:
+      - ./scripts/local/create-k3d-cluster.sh
+  stop:cluster:
+    desc: Destroys the playground cluster to test helm charts
+    cmds:
+      - ./scripts/local/delete-k3d-cluster.sh
+
+  # Helm Operations
+  local:
+    desc: Generate chart for local usage
+
+  publish:
+    desc: Generate chart for publishing
+    cmds:
+      - ./scripts/ci/publish.sh {{.CLI_ARGS}}
+
+  add:helm:repo:
+    desc: Add Helm dependency repositories
+    dir: chart
+    cmds:
+      - yq --indent 0 '.dependencies | map( select( .repository | contains("oci://") | not ) ) | map(["helm", "repo", "add", .name, .repository] | join(" ")) | .[]' "Chart.lock" | sh --
+
+  update:
+    desc: Update Helm dependencies
+    dir: chart
+    cmds:
+      - task: add:helm:repo
+      - helm dependency update
+
+  deps:
+    desc: Install Helm dependencies
+    dir: chart
+    cmds:
+      - task: add:helm:repo
+      - helm dependency build
+  debug:
+    desc: Debug the helm chart
+    cmds:
+      - ./scripts/local/chart-substituted.sh
+      - task: deps
+      - helm template $RELEASE_NAME ./chart --debug {{.CLI_ARGS}}
+
+  install:
+    desc: Installs the chart
+    cmds:
+      - ./scripts/local/chart-substituted.sh
+      - task: deps
+      - helm upgrade --install $RELEASE_NAME ./chart {{.CLI_ARGS}}
+
+  remove:
+    desc: Removes an installed release
+    cmds:
+      - helm uninstall $RELEASE_NAME

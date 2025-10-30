@@ -1,0 +1,25 @@
+version: "3"
+
+includes:
+  util: ./Taskfile.util.yml
+
+tasks:
+  default:
+    desc: Run all linters
+    cmds:
+      - task: sh
+      - task: helm
+
+  helm:
+    desc: Lints all helm charts
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: helmlint
+
+  sh:
+    desc: Lints shell scripts
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: shellcheck

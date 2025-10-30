@@ -1,0 +1,38 @@
+version: "3"
+
+includes:
+  util: ./Taskfile.util.yml
+
+tasks:
+  default:
+    desc: Run all formatters
+    cmds:
+      - task: exec:scripts
+      - task: releaser
+      - task: chart:sync
+      - task: helm:docs
+
+  exec:scripts:
+    desc: Ensure all shell scripts are executable
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: exec-enforce
+  releaser:
+    desc: Ensure gitlint conforms to atomi_release.yaml
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: releaser-enforce
+  chart:sync:
+    desc: Ensure Chart.tpl.yaml and Chart.yaml is synced
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: enforce-chart-sync
+  helm:docs:
+    desc: Generate Helm Docs
+    cmds:
+      - task: util:pc
+        vars:
+          PC_ID: helm-docs

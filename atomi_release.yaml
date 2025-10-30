@@ -1,0 +1,140 @@
+gitlint: .gitlint
+
+conventionMarkdown:
+  path: docs/developer/CommitConventions.md
+  template: |
+    ---
+    id: commit-conventions
+    title: Commit Conventions
+    ---
+    var___convention_docs___
+keywords:
+  - BREAKING CHANGE
+  - BREAKING CHANGES
+  - BREAKING
+
+branches:
+  - main
+
+specialScopes:
+  no-release:
+    desc: Prevent release from happening
+    release: false
+
+plugins:
+  - module: "@semantic-release/changelog"
+    config:
+      changelogFile: Changelog.md
+  - module: "@semantic-release/exec"
+    config:
+      prepareCmd: ./scripts/ci/publish.sh ${nextRelease.version}
+  - module: "@semantic-release/git"
+    config:
+      message: "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      assets:
+        - chart/**/*.*
+        - Changelog.md
+  - module: "semantic-release-major-tag"
+    config:
+      customTags:
+        - "v${major}"
+        - "v${major}.${minor}"
+  - module: "@semantic-release/github"
+
+# Helm
+types:
+  - type: upstream
+    desc: "Changes from dependencies upstream"
+    section: Upstreams Changes
+    scopes:
+      default:
+        desc: Generic update from upstream dependencies
+        release: "minor"
+    vae:
+      verb: update upstream
+      application: <scope>, <title>
+      example: "upstream(postgresql): from v16.5.2 to v17.0"
+
+  - type: config
+    desc: "Changes to configuration files and scripts"
+    scopes:
+      default:
+        desc: Updates the configuration of the repository, not related to the other scopes
+        release: false
+      lint:
+        desc: Add, update or remove linters
+        release: false
+      fmt:
+        desc: Add, updatge or remove formatters
+        release: false
+      build:
+        desc: Add, update or change build pipelines and generators
+        release: false
+      nix:
+        desc: Add, update or change nix shell
+        release: false
+      env:
+        desc: Add, update or change environment
+        release: false
+      ignore:
+        desc: Add, update or change ignore configurations
+        release: false
+      ci:
+        desc: Add, update or change CI configuration files
+        release: false
+    vae:
+      verb: configure
+      application: <scope> to <title>
+      example: "config(ci): setup nix before executing"
+
+  - type: release
+    desc: Initiate a release (machine initiated)
+    scopes:
+      default:
+        desc: Machine initiated release
+        release: false
+  - type: action
+    desc: Perform a values change
+    scopes:
+      default:
+        desc: Any action
+        release: false
+  - type: docs
+    section: Documentation Updates
+    desc: Documentation only changes
+    scopes:
+      default:
+        desc: Update generic documentation file
+        release: false
+    vae:
+      verb: add
+      application: <scope> documention <title>
+      example: "docs(developer): on how to install dependency packages"
+  - type: feat
+    section: New Features
+    desc: A new feature
+    vae:
+      verb: add
+      application: <scope> <title>
+      example: "feat(n8n): new workflow automation feature"
+    scopes:
+      default:
+        desc: Release a new features
+        release: minor
+  - type: fix
+    section: Bug Fixes
+    desc: A bug fix
+    vae:
+      verb: fix
+      application: <title>
+      example: "fix(n8n): database connection issue"
+    scopes:
+      default:
+        desc: Generic fixes
+        release: patch
+  - type: chore
+    desc: Menial Tasks
+    scopes:
+      default:
+        desc: Menial Tasks
+        release: false

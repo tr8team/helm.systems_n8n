@@ -1,0 +1,48 @@
+name: "CI/CD"
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  Pre-commit:
+    runs-on:
+      - nix
+      - ARM64
+    steps:
+      - name: Atomi CI Environment
+        uses: kirinnee/atomici-action@v2.3.1
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Pre-commit checks
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
+        run: nix-shell nix/shells.nix -A ci --run scripts/ci/pre-commit.sh
+
+  Release:
+    needs:
+      - Pre-commit
+    name: Release
+    if: github.ref == 'refs/heads/main'
+    runs-on:
+      - nix
+      - ARM64
+    steps:
+      - name: AtomiCloud CI Environment
+        uses: kirinnee/atomici-action@v2.3.1
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+
+      - name: Remove GitHooks
+        run: rm ./.git/hooks/* || true
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
+        run: nix-shell nix/shells.nix -A cd --run scripts/ci/release.sh

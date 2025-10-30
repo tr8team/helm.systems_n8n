@@ -1,0 +1,19 @@
+version: "3"
+
+tasks:
+  status:
+    desc: Gets IDE status
+    cmds:
+      - idea-ultimate-remote status .
+  start:
+    desc: Starts Idea Ultimate Gateway IDE
+    cmds:
+      - tmux new -s "idea-u@$(pwd)" -d 'while true; do idea-ultimate-remote run .; done'
+  enter:
+    desc: Access tmux session
+    cmds:
+      - tmux at -t "idea-u@$(pwd)"
+  stop:
+    desc: Stop Idea Ultimate Gateway IDE
+    cmds:
+      - tmux kill-session -t "idea-u@$(pwd)"
