@@ -6,12 +6,12 @@ after="$CI_EMULATE_AFTER"
 set -eu
 
 onExit() {
-	rc="$?"
-	if [ "$rc" = '0' ]; then
-		echo "✅ CI Emulation completed without problems!"
-	else
-		echo "❌ Failed start CI emulation!"
-	fi
+  rc="$?"
+  if [ "$rc" = '0' ]; then
+    echo "✅ CI Emulation completed without problems!"
+  else
+    echo "❌ Failed start CI emulation!"
+  fi
 }
 trap onExit EXIT
 
@@ -25,16 +25,16 @@ container_id=$(docker run --privileged -id -v nix-vol:/nix -v docker-vol:/var/li
 echo "✅ Nix DinD container initialized!"
 
 cleanUp() {
-	rc="$?"
-	echo "🧹 Clean up containers removing containers..."
-	docker kill "${container_id}"
-	docker rm "${container_id}"
-	echo "✅ Containers removed!"
-	if [ "$rc" = '0' ]; then
-		echo "✅ CI Emulation completed without problems!"
-	else
-		echo "❌ Failed run CI emulation!"
-	fi
+  rc="$?"
+  echo "🧹 Clean up containers removing containers..."
+  docker kill "${container_id}"
+  docker rm "${container_id}"
+  echo "✅ Containers removed!"
+  if [ "$rc" = '0' ]; then
+    echo "✅ CI Emulation completed without problems!"
+  else
+    echo "❌ Failed run CI emulation!"
+  fi
 }
 trap cleanUp EXIT
 
@@ -52,15 +52,15 @@ docker exec "${container_id}" git clone /data /workspace >/dev/null
 echo "✅ Git clone emulated!"
 
 if [ "${script}" = '' ]; then
-	echo "🚪 Entering container..."
-	(docker exec -ti "${container_id}" sh) || true
+  echo "🚪 Entering container..."
+  (docker exec -ti "${container_id}" sh) || true
 elif [ "${script}" = ':nix-shell:' ]; then
-	echo "🚪 Entering container..."
-	(docker exec -ti "${container_id}" nix-shell /workspace/nix/shells.nix -A ci) || true
+  echo "🚪 Entering container..."
+  (docker exec -ti "${container_id}" nix-shell /workspace/nix/shells.nix -A ci) || true
 else
-	echo "🏃‍ Running script '${script}'..."
-	docker exec -t "${container_id}" "scripts/ci/${script}.sh"
-	if [ "${after}" = 'enter' ]; then
-		(docker exec -ti "${container_id}" sh) || true
-	fi
+  echo "🏃‍ Running script '${script}'..."
+  docker exec -t "${container_id}" "scripts/ci/${script}.sh"
+  if [ "${after}" = 'enter' ]; then
+    (docker exec -ti "${container_id}" sh) || true
+  fi
 fi

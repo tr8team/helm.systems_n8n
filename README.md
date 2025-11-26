@@ -64,56 +64,57 @@ helm install n8n chart/ \
 
 #### n8n Configuration
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `n8n.protocol` | Protocol (http or https) | `https` |
-| `n8n.host` | Hostname for n8n | `n8n.example.com` |
-| `n8n.webhookUrl` | Webhook URL | `https://n8n.example.com/` |
-| `n8n.editorBaseUrl` | Editor base URL | `https://n8n.example.com/` |
-| `n8n.timezone` | Timezone for n8n | `UTC` |
+| Parameter           | Description                    | Default                                      |
+| ------------------- | ------------------------------ | -------------------------------------------- |
+| `n8n.protocol`      | Protocol (http or https)       | `https`                                      |
+| `n8n.host`          | Hostname for n8n               | `n8n.example.com`                            |
+| `n8n.webhookUrl`    | Webhook URL                    | `https://n8n.example.com/`                   |
+| `n8n.editorBaseUrl` | Editor base URL                | `https://n8n.example.com/`                   |
+| `n8n.timezone`      | Timezone for n8n               | `UTC`                                        |
 | `n8n.encryptionKey` | Encryption key for credentials | `changeme-generate-with-openssl-rand-hex-32` |
 
 #### Database Configuration
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `postgresql.enabled` | Enable PostgreSQL subchart | `true` |
-| `postgresql.auth.username` | PostgreSQL username | `n8n` |
-| `postgresql.auth.password` | PostgreSQL password | `changeme-n8n-postgres-password` |
-| `postgresql.auth.database` | PostgreSQL database name | `n8n` |
-| `postgresql.primary.persistence.size` | PostgreSQL storage size | `20Gi` |
+| Parameter                             | Description                | Default                          |
+| ------------------------------------- | -------------------------- | -------------------------------- |
+| `postgresql.enabled`                  | Enable PostgreSQL subchart | `true`                           |
+| `postgresql.auth.username`            | PostgreSQL username        | `n8n`                            |
+| `postgresql.auth.password`            | PostgreSQL password        | `changeme-n8n-postgres-password` |
+| `postgresql.auth.database`            | PostgreSQL database name   | `n8n`                            |
+| `postgresql.primary.persistence.size` | PostgreSQL storage size    | `20Gi`                           |
 
 #### Redis Configuration
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `redis.enabled` | Enable Redis for queue mode | `true` |
-| `redis.auth.enabled` | Enable Redis authentication | `true` |
-| `redis.auth.password` | Redis password | `changeme-n8n-redis-password` |
-| `redis.master.persistence.size` | Redis storage size | `8Gi` |
+| Parameter                       | Description                 | Default                       |
+| ------------------------------- | --------------------------- | ----------------------------- |
+| `redis.enabled`                 | Enable Redis for queue mode | `true`                        |
+| `redis.auth.enabled`            | Enable Redis authentication | `true`                        |
+| `redis.auth.password`           | Redis password              | `changeme-n8n-redis-password` |
+| `redis.master.persistence.size` | Redis storage size          | `8Gi`                         |
 
 #### Persistence Configuration
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `persistence.enabled` | Enable persistence | `true` |
-| `persistence.size` | Storage size for n8n data | `10Gi` |
-| `persistence.storageClass` | Storage class | `""` |
+| Parameter                  | Description               | Default |
+| -------------------------- | ------------------------- | ------- |
+| `persistence.enabled`      | Enable persistence        | `true`  |
+| `persistence.size`         | Storage size for n8n data | `10Gi`  |
+| `persistence.storageClass` | Storage class             | `""`    |
 
 #### Ingress Configuration
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `ingress.enabled` | Enable ingress | `false` |
-| `ingress.className` | Ingress class name | `nginx` |
-| `ingress.hosts[0].host` | Hostname | `n8n.example.com` |
-| `ingress.tls[0].secretName` | TLS secret name | `n8n-tls` |
+| Parameter                   | Description        | Default           |
+| --------------------------- | ------------------ | ----------------- |
+| `ingress.enabled`           | Enable ingress     | `false`           |
+| `ingress.className`         | Ingress class name | `nginx`           |
+| `ingress.hosts[0].host`     | Hostname           | `n8n.example.com` |
+| `ingress.tls[0].secretName` | TLS secret name    | `n8n-tls`         |
 
 ### Environment-Specific Values
 
 The chart includes pre-configured values files for different environments:
 
 - **values.stage.yaml**: Staging environment configuration
+
   - Host: `n8n.stage.tr8.io`
   - Timezone: `Asia/Singapore`
   - Resources: Medium (500m-1000m CPU, 1-2Gi memory)

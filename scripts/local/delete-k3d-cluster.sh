@@ -12,11 +12,11 @@ echo "🛠️ Attempting to delete cluster '$input'..."
 # obtain existing cluster
 current="$(k3d cluster ls -o json | jq -r --arg input "${input}" '.[] | select(.name == $input) | .name')"
 if [ "$current" = "$input" ]; then
-	echo "🗑️ Cluster found! Deleting cluster..."
-	k3d cluster delete "$input"
-	echo "✅ Cluster deleted!"
+  echo "🗑️ Cluster found! Deleting cluster..."
+  k3d cluster delete "$input"
+  echo "✅ Cluster deleted!"
 else
-	echo "⚠️ Cluster does not exist!"
+  echo "⚠️ Cluster does not exist!"
 fi
 echo "🧹 Cleaning up kubeconfig files..."
 mkdir -p "$HOME/.kube/configs"
