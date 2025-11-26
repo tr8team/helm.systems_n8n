@@ -1,3 +1,3 @@
 #!/bin/sh
 
-time pre-commit run -c ./config/.pre-commit-config.yaml --all-files -v
+time pre-commit run --all-files -v
