@@ -67,7 +67,7 @@ Database host
 */}}
 {{- define "n8n.databaseHost" -}}
 {{- if .Values.postgresql.enabled }}
-{{- printf "%s-postgresql" .Release.Name }}
+{{- printf "%s-postgresql.%s.svc.cluster.local" .Release.Name .Release.Namespace }}
 {{- else }}
 {{- .Values.externalDatabase.host }}
 {{- end }}
@@ -111,7 +111,7 @@ Redis host
 */}}
 {{- define "n8n.redisHost" -}}
 {{- if .Values.redis.enabled }}
-{{- printf "%s-redis-master" .Release.Name }}
+{{- printf "%s-redis-master.%s.svc.cluster.local" .Release.Name .Release.Namespace }}
 {{- else }}
 {{- .Values.externalRedis.host }}
 {{- end }}
