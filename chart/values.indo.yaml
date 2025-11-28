@@ -1,0 +1,77 @@
+# Values for production-indo environment
+
+serviceAccount:
+  create: false
+  name: "n8n-gotrade-n8n"
+
+n8n:
+  protocol: "https"
+  host: "n8n.admin.tr8.wiki"
+  webhookUrl: "https://n8n.admin.tr8.wiki/"
+  editorBaseUrl: "https://n8n.admin.tr8.wiki/"
+  timezone: "Asia/Singapore"
+
+# Ingress disabled - user will use other methods to access
+ingress:
+  enabled: false
+
+# ALB Ingress disabled since ingress is disabled
+albIngress:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  size: 20Gi
+
+postgresql:
+  enabled: true
+  auth:
+    username: n8n
+    database: n8n
+  primary:
+    persistence:
+      enabled: true
+      size: 30Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+# Redis disabled - n8n will run in regular mode
+redis:
+  enabled: false
+
+podLabels:
+  tr8.io/landscape: production-indo
+
+additionalLabels:
+  tr8.io/landscape: production-indo
+
+podAnnotations:
+  tr8.io/landscape: production-indo
+
+additionalAnnotations:
+  tr8.io/landscape: production-indo
+
+# Node selector for production-indo environment
+nodeSelector:
+  karpenter.sh/capacity-type: "spot"
+  kubernetes.io/arch: "amd64"
+
+# Tolerations for spot instances
+tolerations:
+  - key: "karpenter.sh/capacity-type"
+    operator: "Equal"
+    value: "spot"
+    effect: "NoSchedule"
