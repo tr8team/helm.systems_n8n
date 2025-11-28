@@ -104,18 +104,18 @@ spec:
           httpGet:
             path: /healthz
             port: http
-          initialDelaySeconds: 30
+          initialDelaySeconds: 120
           periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 6
+          failureThreshold: 10
         readinessProbe:
           httpGet:
             path: /healthz
             port: http
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           periodSeconds: 5
           timeoutSeconds: 3
-          failureThreshold: 3
+          failureThreshold: 20
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         volumeMounts:
