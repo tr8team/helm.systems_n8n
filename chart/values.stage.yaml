@@ -76,6 +76,12 @@ podAnnotations:
 additionalAnnotations:
   tr8.io/landscape: staging
 
+# Extra environment variables for n8n
+extraEnv:
+  # Listen on IPv6 all interfaces for IPv6-only cluster
+  - name: N8N_LISTEN_ADDRESS
+    value: "::"
+
 # Node selector for staging environment
 nodeSelector:
   karpenter.sh/capacity-type: "spot"
