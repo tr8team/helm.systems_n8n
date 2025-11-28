@@ -52,9 +52,28 @@ postgresql:
         cpu: 250m
         memory: 512Mi
 
-# Redis disabled - n8n will run in regular mode
+# Redis enabled with IPv6 support (n8n 1.121.3+ supports QUEUE_BULL_REDIS_DUALSTACK)
 redis:
-  enabled: false
+  enabled: true
+  auth:
+    enabled: true
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      limits:
+        cpu: 250m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+# Extra environment variables
+extraEnv:
+  # Enable IPv6 support for Redis connection
+  - name: QUEUE_BULL_REDIS_DUALSTACK
+    value: "true"
 
 podLabels:
   tr8.io/landscape: production-indo
