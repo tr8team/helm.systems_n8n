@@ -5,16 +5,20 @@ metadata:
   name: {{ include "n8n.fullname" . }}
   labels:
     {{- include "n8n.labels" . | nindent 4 }}
+  {{- if or (eq .Values.ingress.className "shared-alb") .Values.ingress.annotations }}
   annotations:
+    {{- if eq .Values.ingress.className "shared-alb" }}
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/healthcheck-path: /healthz
     alb.ingress.kubernetes.io/ip-address-type: dualstack
+    {{- end }}
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+  {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:

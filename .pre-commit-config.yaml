@@ -1,1 +1,41 @@
-/nix/store/0b625ll1zlh5jhl7j9jcchjbx5dq2f8v-pre-commit-config.json
+repos:
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.17
+    hooks:
+      - id: helmlint
+  - repo: https://github.com/tr8team/gotrade-pre-commit-hooks
+    rev: v1.2.0
+    hooks:
+      - id: yamlfmt
+        exclude: ^chart/.*\.(yaml|yml)$
+      - id: mdfmt
+        exclude: ^.*(Changelog|chart/README)\.(MD|md)$
+      - id: nixfmt
+      - id: jsonfmt
+      - id: shfmt
+      - id: exec-enforce
+      - id: releaser-enforce
+  - repo: local
+    hooks:
+      - id: enforce-chart-sync
+        name: Enforce Chart.tpl.yaml and Chart.yaml is synced
+        entry: ./scripts/local/chart-substituted.sh
+        language: system
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.11.0
+    hooks:
+      - id: helm-docs

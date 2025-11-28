@@ -1,5 +1,9 @@
 # Values for staging environment
 
+serviceAccount:
+  create: false
+  name: "n8n-gotrade-n8n"
+
 n8n:
   protocol: "https"
   host: "api.n8n.systems.staging.tr8.tech"
@@ -9,7 +13,7 @@ n8n:
 
 ingress:
   enabled: true
-  className: "shared-alb"
+  className: "nginx"
   host: "api.n8n.systems.staging.tr8.tech"
   path: "/"
   pathType: Prefix
