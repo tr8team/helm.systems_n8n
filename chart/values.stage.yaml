@@ -19,6 +19,11 @@ ingress:
   pathType: Prefix
   annotations: {}
 
+# ALB Ingress to route traffic from ALB to nginx-ingress-controller
+albIngress:
+  enabled: true
+  nginxServiceName: "nginx-ingress-ingress-nginx-controller"
+
 resources:
   limits:
     cpu: 1000m
