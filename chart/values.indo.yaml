@@ -1,5 +1,9 @@
 # Values for production-indo environment
 
+# Use latest n8n version (1.121.3) which supports IPv6 Redis
+image:
+  tag: "1.121.3"
+
 serviceAccount:
   create: false
   name: "n8n-gotrade-n8n"
