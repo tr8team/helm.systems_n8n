@@ -76,6 +76,12 @@ podAnnotations:
 additionalAnnotations:
   tr8.io/landscape: staging
 
+# Extra environment variables for n8n
+extraEnv:
+  # Force Node.js to prefer IPv4 over IPv6 to fix Redis connection issues
+  - name: NODE_OPTIONS
+    value: "--dns-result-order=ipv4first"
+
 # Node selector for staging environment
 nodeSelector:
   karpenter.sh/capacity-type: "spot"
