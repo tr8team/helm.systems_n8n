@@ -54,33 +54,10 @@ postgresql:
         - IPv4
         - IPv6
 
+# Redis disabled because n8n's ioredis doesn't support IPv6-only clusters
+# n8n will run in regular mode instead of queue mode
 redis:
-  enabled: true
-  auth:
-    enabled: true
-  master:
-    persistence:
-      enabled: true
-      size: 8Gi
-    resources:
-      limits:
-        cpu: 250m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-    service:
-      # Use PreferDualStack to get both IPv4 and IPv6 addresses
-      ipFamilyPolicy: PreferDualStack
-      ipFamilies:
-        - IPv4
-        - IPv6
-  replica:
-    service:
-      ipFamilyPolicy: PreferDualStack
-      ipFamilies:
-        - IPv4
-        - IPv6
+  enabled: false
 
 podLabels:
   tr8.io/landscape: staging
@@ -93,12 +70,6 @@ podAnnotations:
 
 additionalAnnotations:
   tr8.io/landscape: staging
-
-# Extra environment variables for n8n
-extraEnv:
-  # Force Node.js to prefer IPv4 over IPv6 to fix Redis connection issues
-  - name: NODE_OPTIONS
-    value: "--dns-result-order=ipv4first"
 
 # Node selector for staging environment
 nodeSelector:
