@@ -12,7 +12,7 @@ n8n:
   timezone: "Asia/Singapore"
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   host: "api.n8n.systems.staging.tr8.tech"
   path: "/"
