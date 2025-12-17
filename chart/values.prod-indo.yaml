@@ -15,7 +15,7 @@ ingress:
   pathType: Prefix
   annotations: {}
 
-# Production-grade resources
+# Production-grade resources for main pod
 resources:
   limits:
     cpu: 2000m
@@ -23,6 +23,18 @@ resources:
   requests:
     cpu: 1000m
     memory: 2Gi
+
+# Worker configuration for queue processing
+worker:
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  sharedStorage: false
 
 persistence:
   enabled: true

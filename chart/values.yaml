@@ -36,6 +36,16 @@ n8n:
   # Generate with: openssl rand -hex 32
   encryptionKey: "changeme-generate-with-openssl-rand-hex-32"
 
+# -- Worker configuration (only used when Redis is enabled for queue mode)
+worker:
+  # -- Number of worker replicas
+  replicaCount: 1
+  # -- Worker resource limits and requests (defaults to main resources if not specified)
+  resources: {}
+  # -- Whether workers should mount shared storage (requires ReadWriteMany if enabled)
+  # Workers typically don't need persistent storage as they only execute jobs
+  sharedStorage: false
+
 # -- Extra environment variables
 extraEnv: []
   # - name: N8N_LOG_LEVEL
