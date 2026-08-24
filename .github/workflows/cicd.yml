@@ -34,10 +34,24 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: AtomiCloud/actions.setup-nix@v2
+      # setup-nix ignores `token`/`fetch-depth` inputs, so its internal checkout leaves
+      # the default GITHUB_TOKEN as the push credential — which the org ruleset's
+      # "changes must be made through a pull request" rule rejects on main. Check out
+      # explicitly with the release PAT (org-admin, ruleset bypass actor) instead.
+      - name: Checkout with release token
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN_SEMANTIC_RELEASE }}
           fetch-depth: 0
+
+      - name: Configure git identity for semantic-release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - uses: AtomiCloud/actions.setup-nix@v2
+        with:
+          checkout: "false"
 
       - name: Remove GitHooks
         run: rm ./.git/hooks/* || true
