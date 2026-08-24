@@ -1,6 +1,7 @@
-#!/nix/var/nix/profiles/default/bin/nix-shell
-#!nix-shell ../../nix/shells.nix -A cd -i bash
-# shellcheck shell=bash
+#!/bin/bash
+# Runs inside `nix develop .#cd` (see cicd.yml) — the legacy nix-shell shebang
+# pointed at /nix/var/nix/profiles/default/bin/nix-shell which no longer exists
+# on the runners (exit 126).
 set -euo pipefail
 
 export VERSION="$1"
