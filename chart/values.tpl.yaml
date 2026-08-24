@@ -153,6 +153,12 @@ ingress:
   pathType: Prefix
   annotations: {}
 
+# -- ALB Ingress configuration (for nginx ingress flow)
+# When using nginx ingressClass, this creates an ALB Ingress in ingress-nginx namespace
+albIngress:
+  enabled: false
+  nginxServiceName: "nginx-ingress-ingress-nginx-controller"
+
 # -- Resource limits and requests
 resources:
   limits:
