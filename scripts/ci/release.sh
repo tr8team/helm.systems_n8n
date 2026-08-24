@@ -6,12 +6,12 @@
 # node18-compatible matrix (semantic-release 22 era) via a yarn shim.
 # Same class as tradecharlie#7927 / gotradeindo#8292 / tradecrmtwo#3817.
 RELEASE_SHIM_REAL_BIN="$(command -v yarn)" || {
-  echo "release.sh: yarn not found in PATH, cannot pin release deps" >&2
-  exit 1
+	echo "release.sh: yarn not found in PATH, cannot pin release deps" >&2
+	exit 1
 }
 export RELEASE_SHIM_REAL_BIN
 SHIM_DIR="$(mktemp -d)"
-cat > "$SHIM_DIR/yarn" <<'SH'
+cat >"$SHIM_DIR/yarn" <<'SH'
 #!/bin/sh
 if [ -z "$RELEASE_SHIM_REAL_BIN" ]; then
   echo "release-shim: RELEASE_SHIM_REAL_BIN not set" >&2
