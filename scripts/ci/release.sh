@@ -17,6 +17,11 @@ if [ -z "$RELEASE_SHIM_REAL_BIN" ]; then
   echo "release-shim: RELEASE_SHIM_REAL_BIN not set" >&2
   exit 1
 fi
+# Only rewrite install commands: `yarn exec <binary>` needs a bare binary name,
+# and rewriting it to a versioned spec breaks the exec ("Couldn't find the binary").
+if [ "$1" != "add" ]; then
+  exec "$RELEASE_SHIM_REAL_BIN" "$@"
+fi
 n=$#; i=0
 while [ "$i" -lt "$n" ]; do
   a=$1; shift
